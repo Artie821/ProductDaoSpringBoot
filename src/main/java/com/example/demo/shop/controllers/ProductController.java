@@ -1,4 +1,4 @@
-package com.example.demo.product;
+package com.example.demo.shop;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,11 +22,9 @@ public class ProductController {
     }
 
     @GetMapping("/products/details/{name}")
-    public String productDetails(Model model, @PathVariable String name){
-        System.out.println(name);
+    public String productDetails(Model model, @PathVariable String name) {
         model.addAttribute("product", productDao.byName(name));
         return "details";
     }
-
 
 }
