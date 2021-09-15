@@ -22,6 +22,7 @@
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <title>Fresh Food Shop</title>
 </head>
 <body>
 <section>
@@ -32,24 +33,21 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <a class="navbar-brand" href="/">
-            <img src="../../../avatar.png" width="40" height="40" class="d-inline-block align-top rounded"
+            <img src="${pageContext.request.contextPath}/images/avatar.jpg" width="40" height="40" class="d-inline-block align-top rounded"
                  alt="idź na start">
-            Wymień Książkę
+            Fresh Food Shop
         </a>
 
         <div class="collapse navbar-collapse" id="mainNavigation">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="howitsworks">Jak to działa?</a>
+                    <a class="nav-link" href="#" hidden>Jak to działa?</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/admin/usersbooks">Książki naszych użytkowników</a>
+                    <a class="nav-link" href="#" hidden>Rejestracja</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/admin/register">Rejestracja</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/login">Logowanie</a>
+                    <a class="nav-link" href="/adminOrUser">Logowanie</a>
                 </li>
             </ul>
         </div>
@@ -61,31 +59,31 @@
             <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
                 <div class="carousel-inner">
                     <div class="carousel-item active">
-                        <img src="../../data/apple.jpg" class="card-img-top" alt="…" height="650">
+                        <img src="${pageContext.request.contextPath}/images/banana.jpg" class="card-img-top" alt="…" height="650">
                         <div class="card-body" style="padding-bottom: 1px">
-                            <h5 class="card-title"><em>Kiedy pierwszy raz czytam dobrą książkę, doświadczam uczucia, jakbym zyskał nowego przyjaciela.</em></h5>
-                            <p class="small"><em>Johann Wolfgang Goethe</em></p>
+                            <h5 class="card-title"><em>Banan – jadalny owoc tropikalny, z botanicznego punktu widzenia – jagoda, wytwarzany przez kilka gatunków roślin zielnych z rodzaju banan.</em></h5>
+                            <p class="small"><em></em></p>
                         </div>
                     </div>
                     <div class="carousel-item">
-                        <img src="../../data/apple.jpg" class="card-img-top" alt="…" height="650">
+                        <img src="${pageContext.request.contextPath}/images/grapes.jpg" class="card-img-top" alt="…" height="650">
                         <div class="card-body" style="padding-bottom: 1px">
-                            <h5 class="card-title"><em>Książka i możność czytania to jeden z największych cudów ludzkiej cywilizacji.</em></h5>
-                            <p class="small"><em>Maria Dąbrowska</em></p>
+                            <h5 class="card-title"><em>Winogrono – owoc roślin z rodziny winoroślowatych, głównie winorośli właściwej. Winogrona można jeść na surowo lub można je przetwarzać.</em></h5>
+                            <p class="small"><em></em></p>
                         </div>
                     </div>
                     <div class="carousel-item">
-                        <img src="${pageContext.request.contextPath}/data/apple.jpg" class="card-img-top" alt="…" height="650">
+                        <img src="${pageContext.request.contextPath}/images/potato.jpeg" class="card-img-top" alt="…" height="650">
                         <div class="card-body" style="padding-bottom: 1px">
-                            <h5 class="card-title"><em>Nie trzeba wielkich mieć bibliotek, by przyjacielem książki zostać.</em></h5>
-                            <p class="small"><em>H. Łochocka</em></p>
+                            <h5 class="card-title"><em>Ziemniak (Solanum tuberosum L.) – gatunek rośliny należący do rodziny psiankowatych. Nazwa „ziemniak” odnosi się tak do całej rośliny, jak i do jej jadalnych, bogatych w skrobię bulw pędowych[4], z powodu których ten gatunek uprawia się na skalę masową[5]. Roślina wywodzi się z Ameryki Południowej, gdzie zaczęto ją uprawiać już tysiące lat temu.</em></h5>
+                            <p class="small"><em></em></p>
                         </div>
                     </div>
                     <div class="carousel-item">
-                        <img src="${pageContext.request.contextPath}./apple.jpg" class="card-img-top" alt="…" height="650">
+                        <img src="${pageContext.request.contextPath}/images/apple.jpg" class="card-img-top" alt="…" height="650">
                         <div class="card-body" style="padding-bottom: 1px">
-                            <h5 class="card-title"><em>Są książki, które się czyta. Są książki, które się pochłania. Są książki, które pochłaniają czytającego.</em></h5>
-                            <p class="small"><em>M. Pruszkowska</em></p>
+                            <h5 class="card-title"><em>Jabłko – jadalny, kulisty owoc drzew z rodzaju jabłoń Malus. Jabłka odmian uprawnych o mieszańcowym pochodzeniu, uznawanych za gatunek jabłoń domowa Malus domestica, są istotnym komercyjnie owocem o soczystym i chrupkim miąższu. Są spożywane na surowo, a także po obróbce kulinarnej.</em></h5>
+                            <p class="small"><em></em></p>
                         </div>
                     </div>
                 </div>

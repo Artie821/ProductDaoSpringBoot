@@ -1,5 +1,7 @@
-package com.example.demo.shop;
+package com.example.demo.shop.repositories;
 
+import com.example.demo.shop.models.Product;
+import com.example.demo.shop.models.ProductCategory;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -10,9 +12,9 @@ import java.util.List;
 public class ProductDao {
 
     private List<Product> products = Arrays.asList(
-            new Product("Mydło", "Pieniące", new BigDecimal("25.00")),
-            new Product("Masło", "Się roztrzasło", new BigDecimal("99.99")),
-            new Product("Chleb", "Razowy", new BigDecimal("5.50")));
+            new Product("Banan", "Żółty", new BigDecimal("25.00"), new ProductCategory("owoce")),
+            new Product("Ziemniak", "Zimowe", new BigDecimal("99.99"), new ProductCategory("warzywa")),
+            new Product("Chleb", "Razowy", new BigDecimal("5.50"), new ProductCategory("inne")));
 
     public List<Product> all() {
         return products;
@@ -26,4 +28,5 @@ public class ProductDao {
         }
         return null;
     }
+
 }
