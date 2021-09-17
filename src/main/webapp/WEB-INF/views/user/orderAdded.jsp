@@ -81,48 +81,18 @@
 <section style="width: 100%">
     <div class="row">
         <div class="container p-3 my-3 border shadow p-1 mb-1 bg-white rounded">
-            <h3 style="float:left"> Moje zamówienia: </h3>
-        </div>
-    </div>
-    <div class="row">
-        <div class="container p-3 my-3 border shadow p-1 mb-1 bg-white rounded">
-            <table class="table table-striped">
-                <thead class="thead-dark">
-                <tr>
-                    <th>Numer zamówienia:</th>
-                    <th>Wartość zamówienia:</th>
-                    <th>Data zamówienia:</th>
-                    <th>Status zamówienia:</th>
-                    <th>Akcja</th>
-                </tr>
-                </thead>
-                <tbody>
-                <c:forEach items="${orders}" var="order">
-                    <tr>
-                        <td><c:out value="${order.orderNumber}"/></td>
-                        <td><c:out value="${order.cartValue}"/> PLN</td>
-                        <td><c:out value="${order.date}"/></td>
-                        <td>
-                            <c:if test="${order.orderState == 'PRZYJĘTO'}">
-                                <span class="badge badge-pill badge-success">PRZYJĘTO DO REALIZACJI</span>
-                            </c:if>
-                            <c:if test="${order.orderState == 'REALIZACJA'}">
-                                <span class="badge badge-pill badge-warning">W TRAKCIE REALIZACJI</span>
-                            </c:if>
-                            <c:if test="${order.orderState == 'ZREALIZOWANE'}">
-                                <span class="badge badge-pill badge-success">ZREALIZOWANO</span>
-                            </c:if>
-                            <c:if test="${order.orderState == 'ANULOWANO'}">
-                                <span class="badge badge-pill badge-danger">ANULOWANO</span>
-                            </c:if>
-                        </td>
-                        <td>
-                            <a href="/details/${order.orderNumber}" class="btn btn-outline-info btn-sm">Pokaż detale</a>
-                        </td>
-                    </tr>
-                </c:forEach>
-                </tbody>
-            </table>
+            <div class="card text-white bg-secondary ">
+                <h5 class="card-header">Opis postępowania:</h5>
+                <div class="card-body">
+                    <h5 class="card-title">Gratulację twoje zamówienie zostało przekazane do realizacji!! </h5>
+                    <br>
+                    <h5 class="card-title">By założyć kolejne zamówienie przejdź do sekcji Produkty </h5>
+                    <a href="/products/" type="button" class="btn btn-primary btn-lg btn-block">Przejdź do sekcji PRODUKTY</a>
+                    <br>
+                    <h5 class="card-title">By podejrzeć swoje zamówniena i ich status przejdź do sekcji ZAMÓWIENIA </h5>
+                    <a href="/orders/" type="button" class="btn btn-primary btn-lg btn-block">Przejdź do sekcji ZAMÓWIENIA</a>
+                </div>
+            </div>
         </div>
     </div>
 </section>

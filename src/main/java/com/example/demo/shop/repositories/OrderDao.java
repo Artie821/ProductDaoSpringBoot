@@ -30,4 +30,9 @@ public class OrderDao {
         Order order = new Order(all, date, decimal, orderNumber, o);
         orderList.add(order);
     }
+
+    public void changeState(int id, OrderState state){
+        OrderState o = state;
+        orderList.get(id).setOrderState(o);
+    }
 }

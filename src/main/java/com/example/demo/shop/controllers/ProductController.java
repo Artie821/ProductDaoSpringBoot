@@ -6,10 +6,7 @@ import com.example.demo.shop.services.CartService;
 import com.example.demo.shop.services.OrderService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -80,8 +77,23 @@ public class ProductController {
     public String addOrder(Model model, HttpServletRequest request) {
         orderService.addCartToUserOrders(BigDecimal.valueOf(Double.valueOf(request.getParameter("totalValue"))));
         cartService.all().clear();
-        return "redirect:/cart/";
+        return "user/orderAdded";
     }
+
+    @GetMapping("/details/{id}")
+    public String orderDetails(@PathVariable long id, Model model){
+        model.addAttribute("bonus", orderService.OrderBonus(id));
+        model.addAttribute("itemsInCart", cartService.numberOfItemsInCart());
+        model.addAttribute("order", orderService.findById(id));
+        return "user/orderDetails";
+    }
+
+    @GetMapping("/orderAdded")
+    public String orderDetails( Model model){
+        model.addAttribute("itemsInCart", cartService.numberOfItemsInCart());
+        return "user/orderAdded";
+    }
+
 
 
 }

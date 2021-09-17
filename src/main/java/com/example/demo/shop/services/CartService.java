@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Service
-public class CartService {
+public class CartService{
 
     private final CartDao cartDao;
 

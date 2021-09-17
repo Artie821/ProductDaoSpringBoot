@@ -57,7 +57,7 @@
     <div class="row">
         <div class="container p-3 my-3 border shadow p-1 mb-1 bg-white rounded">
             <form>
-                        <a style="float:left" class="btn btn-outline-danger btn-block" href="/" > Admin </a>
+                        <a style="float:left" class="btn btn-outline-danger btn-block" href="/dashboard/" > Admin </a>
                         <a style="float:right" class="btn btn-outline-success btn-block" href="/products/" > User </a>
             </form>
         </div>

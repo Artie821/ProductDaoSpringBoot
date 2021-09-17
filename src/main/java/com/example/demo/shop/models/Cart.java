@@ -1,11 +1,11 @@
 package com.example.demo.shop.models;
 
-import com.example.demo.shop.repositories.ProductDao;
 import lombok.Data;
 
+import java.util.List;
 
 @Data
-public class Cart {
+public class Cart implements Cloneable {
 
     private Product product;
     private long quantity;

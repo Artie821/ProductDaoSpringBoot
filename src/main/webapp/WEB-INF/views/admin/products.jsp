@@ -36,19 +36,19 @@
         <div class="collapse navbar-collapse" id="mainNavigation">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item ">
-                    <a class="nav-link" href="/products/">Produkty</a>
+                    <a class="nav-link" href="/products/" hidden>Produkty</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/adminOrUser" hidden>Logowanie</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/cart/"><img class="rounded-circle" width="30" height="25"
-                                                           style="padding-right: 5px"
-                                                           src="${pageContext.request.contextPath}/images/cart.png">Koszyk
+                    <a class="nav-link" href="/cart/" hidden><img class="rounded-circle" width="30" height="25"
+                                                                  style="padding-right: 5px"
+                                                                  src="${pageContext.request.contextPath}/images/cart.png">Koszyk
                         <span class="badge badge-pill badge-success">${itemsInCart}</span></a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="/orders/">Zamówienia</a>
+                    <a class="nav-link" href="/orders/" hidden>Zamówienia</a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-sm-5 mt-2 mt-md-0">
@@ -57,12 +57,10 @@
                        aria-haspopup="true"
                        aria-expanded="false">
                         <img class="rounded-circle" width="20" height="20"
-                             src="${pageContext.request.contextPath}/images/user.png" alt="USER"> USER</a>
+                             src="${pageContext.request.contextPath}/images/user.png" alt="USER"> ADMIN</a>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-                        <a class="dropdown-item" href="#" hidden>Ustawienia</a>
-                        <a class="dropdown-item" href="/cart/">Koszyk <span
-                                class="badge badge-pill badge-success">${itemsInCart}</span></a>
+                        <a class="dropdown-item" href="#" >Ustawienia</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="/">Wyloguj</a>
 
@@ -81,48 +79,44 @@
 <section style="width: 100%">
     <div class="row">
         <div class="container p-3 my-3 border shadow p-1 mb-1 bg-white rounded">
-            <h3 style="float:left"> Moje zamówienia: </h3>
+            <h3 style="float:left">
+                <a href="/dashboard/" class="btn btn-outline-success  btn-large" >Zarządzaj kategoriami</a>
+                <a href="/productsAdmin/" class="btn btn-outline-success active btn--large">Zarządzaj produktami</a>
+                <a href="/ordersAdmin/" class="btn btn-outline-success  btn-large">Zarządzaj zamówieniami</a>
+            </h3>
         </div>
     </div>
     <div class="row">
         <div class="container p-3 my-3 border shadow p-1 mb-1 bg-white rounded">
-            <table class="table table-striped">
+            <table id="table" class="table table-striped">
                 <thead class="thead-dark">
                 <tr>
-                    <th>Numer zamówienia:</th>
-                    <th>Wartość zamówienia:</th>
-                    <th>Data zamówienia:</th>
-                    <th>Status zamówienia:</th>
+                    <th>Nazwa</th>
+                    <th>Cena (PLN)</th>
+                    <th>Kategoria</th>
+                    <th>Opis</th>
                     <th>Akcja</th>
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${orders}" var="order">
+                <c:forEach items="${products}" var="product" >
                     <tr>
-                        <td><c:out value="${order.orderNumber}"/></td>
-                        <td><c:out value="${order.cartValue}"/> PLN</td>
-                        <td><c:out value="${order.date}"/></td>
-                        <td>
-                            <c:if test="${order.orderState == 'PRZYJĘTO'}">
-                                <span class="badge badge-pill badge-success">PRZYJĘTO DO REALIZACJI</span>
-                            </c:if>
-                            <c:if test="${order.orderState == 'REALIZACJA'}">
-                                <span class="badge badge-pill badge-warning">W TRAKCIE REALIZACJI</span>
-                            </c:if>
-                            <c:if test="${order.orderState == 'ZREALIZOWANE'}">
-                                <span class="badge badge-pill badge-success">ZREALIZOWANO</span>
-                            </c:if>
-                            <c:if test="${order.orderState == 'ANULOWANO'}">
-                                <span class="badge badge-pill badge-danger">ANULOWANO</span>
-                            </c:if>
-                        </td>
-                        <td>
-                            <a href="/details/${order.orderNumber}" class="btn btn-outline-info btn-sm">Pokaż detale</a>
+                        <td><c:out value="${product.name}"/></td>
+                        <td><c:out value="${product.price}"/></td>
+                        <td><c:out value="${product.productCategory.categoryName}"/></td>
+                        <td><c:out value="${product.description}"/></td>
+                        <td><a href="/editProductAdmin/${product.name}" class="btn btn-outline-success btn-sm" value="">EDYTUJ</a>
+                            <a href="/removeProductAdmin/${product.name}" class="btn btn-outline-danger btn-sm" value="">USUŃ</a>
                         </td>
                     </tr>
                 </c:forEach>
                 </tbody>
             </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="container p-3 my-3 border shadow p-1 mb-1 bg-white rounded">
+            <a href="/addProductAdmin/"  class="btn btn-outline-success btn-lg" >DODAJ PRODUKT</a>
         </div>
     </div>
 </section>

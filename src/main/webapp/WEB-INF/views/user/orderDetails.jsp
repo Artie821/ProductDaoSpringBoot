@@ -81,27 +81,51 @@
 <section style="width: 100%">
     <div class="row">
         <div class="container p-3 my-3 border shadow p-1 mb-1 bg-white rounded">
-            <h3 style="float:left"> Moje zamówienia: </h3>
+            <h3 style="float:left"> Detale zamówienia nr: ${order.orderNumber}
+                <h3 style="float: right">
+                    <button class="btn btn-success" onclick="goBack()">Powrót</button>
+                </h3>
+            </h3>
         </div>
     </div>
     <div class="row">
         <div class="container p-3 my-3 border shadow p-1 mb-1 bg-white rounded">
             <table class="table table-striped">
-                <thead class="thead-dark">
+                <thead>
                 <tr>
-                    <th>Numer zamówienia:</th>
-                    <th>Wartość zamówienia:</th>
-                    <th>Data zamówienia:</th>
-                    <th>Status zamówienia:</th>
-                    <th>Akcja</th>
+                    <th>PRODUKTY:</th>
+                    <th>ILOŚĆ:</th>
+                    <th>CENA ZA 1:</th>
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${orders}" var="order">
+                <c:forEach items="${order.cartList}" var="cart">
                     <tr>
-                        <td><c:out value="${order.orderNumber}"/></td>
-                        <td><c:out value="${order.cartValue}"/> PLN</td>
-                        <td><c:out value="${order.date}"/></td>
+                        <td>
+                                ${cart.product.name}
+                        </td>
+                        <td>
+                                ${cart.quantity}
+                        </td>
+                        <td>
+                                ${cart.product.price} PLN
+                        </td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>STATUS:</th>
+                    <th>WARTOŚĆ ŁĄCZNA:</th>
+                    <th>DATA ZŁOŻENIA ZAMÓWIENIA:</th>
+                    <th>BONUS</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
                         <td>
                             <c:if test="${order.orderState == 'PRZYJĘTO'}">
                                 <span class="badge badge-pill badge-success">PRZYJĘTO DO REALIZACJI</span>
@@ -117,10 +141,21 @@
                             </c:if>
                         </td>
                         <td>
-                            <a href="/details/${order.orderNumber}" class="btn btn-outline-info btn-sm">Pokaż detale</a>
+                                ${order.cartValue} PLN
+                        </td>
+                        <td>
+                                ${order.date}
+                        </td>
+                        <td>
+                           <c:if test="${bonus}">
+                               <span class="badge badge-pill badge-success">TAK</span>
+                           </c:if>
+                            <c:if test="${!bonus}">
+                                <span class="badge badge-pill badge-danger">NIE</span>
+                            </c:if>
                         </td>
                     </tr>
-                </c:forEach>
+
                 </tbody>
             </table>
         </div>
