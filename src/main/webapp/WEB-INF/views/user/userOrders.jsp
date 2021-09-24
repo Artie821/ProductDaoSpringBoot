@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
@@ -26,7 +27,7 @@
                 aria-label="Pokaż lub ukryj nawigację">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="/">
+        <a class="navbar-brand" href="/user/products/">
             <img src="${pageContext.request.contextPath}/images/avatar.jpg" width="40" height="40"
                  class="d-inline-block align-top rounded"
                  alt="idź na start">
@@ -36,19 +37,16 @@
         <div class="collapse navbar-collapse" id="mainNavigation">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item ">
-                    <a class="nav-link" href="/products/">Produkty</a>
+                    <a class="nav-link" href="/user/products/">Produkty</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/adminOrUser" hidden>Logowanie</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/cart/"><img class="rounded-circle" width="30" height="25"
+                    <a class="nav-link" href="/user/cart/"><img class="rounded-circle" width="30" height="25"
                                                            style="padding-right: 5px"
                                                            src="${pageContext.request.contextPath}/images/cart.png">Koszyk
                         <span class="badge badge-pill badge-success">${itemsInCart}</span></a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="/orders/">Zamówienia</a>
+                    <a class="nav-link" href="/user/orders/">Zamówienia</a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-sm-5 mt-2 mt-md-0">
@@ -57,21 +55,19 @@
                        aria-haspopup="true"
                        aria-expanded="false">
                         <img class="rounded-circle" width="20" height="20"
-                             src="${pageContext.request.contextPath}/images/user.png" alt="USER"> USER</a>
+                             src="${pageContext.request.contextPath}/images/user.png" alt="USER"> ${username}</a>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
                         <a class="dropdown-item" href="#" hidden>Ustawienia</a>
-                        <a class="dropdown-item" href="/cart/">Koszyk <span
+                        <a class="dropdown-item" href="/user/cart/">Koszyk <span
                                 class="badge badge-pill badge-success">${itemsInCart}</span></a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/">Wyloguj</a>
-
-                        <%--                        <sec:authorize access="isAuthenticated()">--%>
-                        <%--                            <form action="<c:url value="/"/>" method="post">--%>
-                        <%--                                <input type="submit" class="dropdown-item" value="Wyloguj">--%>
-                        <%--                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>--%>
-                        <%--                            </form>--%>
-                        <%--                        </sec:authorize>--%>
+                        <sec:authorize access="isAuthenticated()">
+                            <form action="<c:url value="/perform_logout"/>" method="post">
+                                <input type="submit" class="dropdown-item" value="Wyloguj">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            </form>
+                        </sec:authorize>
                     </div>
                 </li>
             </ul>
@@ -97,27 +93,27 @@
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${orders}" var="order">
+                <c:forEach items="${orders}" var="userOrders">
                     <tr>
-                        <td><c:out value="${order.orderNumber}"/></td>
-                        <td><c:out value="${order.cartValue}"/> PLN</td>
-                        <td><c:out value="${order.date}"/></td>
+                        <td><c:out value="${userOrders.id}"/></td>
+                        <td><c:out value="${userOrders.cartValue}"/> PLN</td>
+                        <td><c:out value="${userOrders.date}"/></td>
                         <td>
-                            <c:if test="${order.orderState == 'PRZYJĘTO'}">
+                            <c:if test="${userOrders.orderState.stateName == 'PRZYJĘTO'}">
                                 <span class="badge badge-pill badge-success">PRZYJĘTO DO REALIZACJI</span>
                             </c:if>
-                            <c:if test="${order.orderState == 'REALIZACJA'}">
+                            <c:if test="${userOrders.orderState.stateName == 'REALIZACJA'}">
                                 <span class="badge badge-pill badge-warning">W TRAKCIE REALIZACJI</span>
                             </c:if>
-                            <c:if test="${order.orderState == 'ZREALIZOWANE'}">
+                            <c:if test="${userOrders.orderState.stateName == 'ZREALIZOWANO'}">
                                 <span class="badge badge-pill badge-success">ZREALIZOWANO</span>
                             </c:if>
-                            <c:if test="${order.orderState == 'ANULOWANO'}">
+                            <c:if test="${userOrders.orderState.stateName == 'ANULOWANO'}">
                                 <span class="badge badge-pill badge-danger">ANULOWANO</span>
                             </c:if>
                         </td>
                         <td>
-                            <a href="/details/${order.orderNumber}" class="btn btn-outline-info btn-sm">Pokaż detale</a>
+                            <a href="/user/details/${userOrders.id}" class="btn btn-outline-info btn-sm">Pokaż detale</a>
                         </td>
                     </tr>
                 </c:forEach>

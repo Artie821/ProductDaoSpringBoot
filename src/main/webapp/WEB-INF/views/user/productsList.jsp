@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -26,7 +27,7 @@
                 aria-label="Pokaż lub ukryj nawigację">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="/">
+        <a class="navbar-brand" href="/user/products/">
             <img src="${pageContext.request.contextPath}/images/avatar.jpg" width="40" height="40"
                  class="d-inline-block align-top rounded"
                  alt="idź na start">
@@ -35,18 +36,15 @@
 
         <div class="collapse navbar-collapse" id="mainNavigation">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/adminOrUser" hidden>Logowanie</a>
-                </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="/products/">Produkty</a>
+                    <a class="nav-link" href="/user/products/">Produkty</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/cart/"><img class="rounded-circle" width="30" height="25" style="padding-right: 5px" src="${pageContext.request.contextPath}/images/cart.png">Koszyk
+                    <a class="nav-link" href="/user/cart/"><img class="rounded-circle" width="30" height="25" style="padding-right: 5px" src="${pageContext.request.contextPath}/images/cart.png">Koszyk
                     <span class="badge badge-pill badge-success">${itemsInCart}</span></a>
                 </li>
                 <li class="nav-item ">
-                    <a class="nav-link" href="/orders/">Zamówienia</a>
+                    <a class="nav-link" href="/user/orders/">Zamówienia</a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-sm-5 mt-2 mt-md-0">
@@ -55,21 +53,19 @@
                        aria-haspopup="true"
                        aria-expanded="false">
                         <img class="rounded-circle" width="20" height="20"
-                             src="${pageContext.request.contextPath}/images/user.png" alt="USER"> USER</a>
+                             src="${pageContext.request.contextPath}/images/user.png" alt="USER"> ${username}</a>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
                         <a class="dropdown-item" href="#" hidden>Ustawienia</a>
-                        <a class="dropdown-item" href="/cart/">Koszyk <span
+                        <a class="dropdown-item" href="/user/cart/">Koszyk <span
                                 class="badge badge-pill badge-success">${itemsInCart}</span></a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/">Wyloguj</a>
-
-                        <%--                        <sec:authorize access="isAuthenticated()">--%>
-                        <%--                            <form action="<c:url value="/"/>" method="post">--%>
-                        <%--                                <input type="submit" class="dropdown-item" value="Wyloguj">--%>
-                        <%--                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>--%>
-                        <%--                            </form>--%>
-                        <%--                        </sec:authorize>--%>
+                        <sec:authorize access="isAuthenticated()">
+                            <form action="<c:url value="/perform_logout"/>" method="post">
+                                <input type="submit" class="dropdown-item" value="Wyloguj">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            </form>
+                        </sec:authorize>
                     </div>
                 </li>
             </ul>
@@ -102,12 +98,19 @@
                         <td><c:out value="${product.price}"/></td>
                         <td><c:out value="${product.productCategory.categoryName}"/></td>
                         <td><c:out value="${product.description}"/></td>
-                        <form:form action="/products/" method="post" modelAttribute="product">
+                        <form:form action="/user/products/" method="post" modelAttribute="product">
                         <td><input name="itemsNumber" type="number" min="0" value="0"></td>
                         <td>
                             <input hidden name="name" value="${product.name}">
-                            <input type="submit" class="btn btn-outline-success btn-sm" value="DODAJ DO KOSZYKA"></a>
+                            <input hidden name="id" value="${product.id}">
+                            <input hidden name="description" value="${product.description}">
+                            <input hidden name="price" value="${product.price}">
+                            <input hidden name="active" value="${product.active}">
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            <input hidden name="productCategory" value="${product.productCategory.id}">
+                            <input type="submit" class="btn btn-outline-success btn-sm" value="DODAJ DO KOSZYKA">
                         </td>
+
                         </form:form>
                     </tr>
                 </c:forEach>

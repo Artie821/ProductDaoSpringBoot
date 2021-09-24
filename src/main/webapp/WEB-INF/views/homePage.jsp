@@ -41,13 +41,10 @@
         <div class="collapse navbar-collapse" id="mainNavigation">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="#" hidden>Jak to działa?</a>
+                    <a class="nav-link" href="/register" >Rejestracja</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" hidden>Rejestracja</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/adminOrUser">Logowanie</a>
+                    <a class="nav-link" href="/login">Logowanie</a>
                 </li>
             </ul>
         </div>

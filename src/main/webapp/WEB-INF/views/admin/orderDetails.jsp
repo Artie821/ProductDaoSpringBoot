@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
@@ -26,7 +27,7 @@
                 aria-label="Pokaż lub ukryj nawigację">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="/">
+        <a class="navbar-brand" href="/admin/dashboard/">
             <img src="${pageContext.request.contextPath}/images/avatar.jpg" width="40" height="40"
                  class="d-inline-block align-top rounded"
                  alt="idź na start">
@@ -36,19 +37,6 @@
         <div class="collapse navbar-collapse" id="mainNavigation">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item ">
-                    <a class="nav-link" href="/products/" hidden>Produkty</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/adminOrUser" hidden>Logowanie</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/cart/" hidden><img class="rounded-circle" width="30" height="25"
-                                                                  style="padding-right: 5px"
-                                                                  src="${pageContext.request.contextPath}/images/cart.png">Koszyk
-                        <span class="badge badge-pill badge-success">${itemsInCart}</span></a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="/orders/" hidden>Zamówienia</a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-sm-5 mt-2 mt-md-0">
@@ -57,19 +45,17 @@
                        aria-haspopup="true"
                        aria-expanded="false">
                         <img class="rounded-circle" width="20" height="20"
-                             src="${pageContext.request.contextPath}/images/user.png" alt="USER"> ADMIN</a>
+                             src="${pageContext.request.contextPath}/images/user.png" alt="USER"> ${username}</a>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
                         <a class="dropdown-item" href="#" >Ustawienia</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/">Wyloguj</a>
-
-                        <%--                        <sec:authorize access="isAuthenticated()">--%>
-                        <%--                            <form action="<c:url value="/"/>" method="post">--%>
-                        <%--                                <input type="submit" class="dropdown-item" value="Wyloguj">--%>
-                        <%--                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>--%>
-                        <%--                            </form>--%>
-                        <%--                        </sec:authorize>--%>
+                        <sec:authorize access="isAuthenticated()">
+                            <form action="<c:url value="/perform_logout"/>" method="post">
+                                <input type="submit" class="dropdown-item" value="Wyloguj">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            </form>
+                        </sec:authorize>
                     </div>
                 </li>
             </ul>
@@ -79,7 +65,7 @@
 <section style="width: 100%">
     <div class="row">
         <div class="container p-3 my-3 border shadow p-1 mb-1 bg-white rounded">
-            <h3 style="float:left"> Detale zamówienia nr: ${order.orderNumber}
+            <h3 style="float:left"> Detale zamówienia nr: ${order.id}
                 <h3 style="float: right">
                     <button class="btn btn-success" onclick="goBack()">Powrót</button>
                 </h3>
@@ -97,7 +83,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${order.cartList}" var="cart">
+                <c:forEach items="${order.cart}" var="cart">
                     <tr>
                         <td>
                                 ${cart.product.name}
@@ -125,16 +111,16 @@
 
                 <tr>
                     <td>
-                        <c:if test="${order.orderState == 'PRZYJĘTO'}">
+                        <c:if test="${order.orderState.stateName == 'PRZYJĘTO'}">
                             <span class="badge badge-pill badge-success">PRZYJĘTO DO REALIZACJI</span>
                         </c:if>
-                        <c:if test="${order.orderState == 'REALIZACJA'}">
+                        <c:if test="${order.orderState.stateName == 'REALIZACJA'}">
                             <span class="badge badge-pill badge-warning">W TRAKCIE REALIZACJI</span>
                         </c:if>
-                        <c:if test="${order.orderState == 'ZREALIZOWANE'}">
+                        <c:if test="${order.orderState.stateName == 'ZREALIZOWANO'}">
                             <span class="badge badge-pill badge-success">ZREALIZOWANO</span>
                         </c:if>
-                        <c:if test="${order.orderState == 'ANULOWANO'}">
+                        <c:if test="${order.orderState.stateName == 'ANULOWANO'}">
                             <span class="badge badge-pill badge-danger">ANULOWANO</span>
                         </c:if>
                     </td>

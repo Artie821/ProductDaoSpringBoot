@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
@@ -26,7 +27,7 @@
                 aria-label="Pokaż lub ukryj nawigację">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="/">
+        <a class="navbar-brand" href="/admin/dashboard/">
             <img src="${pageContext.request.contextPath}/images/avatar.jpg" width="40" height="40"
                  class="d-inline-block align-top rounded"
                  alt="idź na start">
@@ -36,19 +37,6 @@
         <div class="collapse navbar-collapse" id="mainNavigation">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item ">
-                    <a class="nav-link" href="/products/" hidden>Produkty</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/adminOrUser" hidden>Logowanie</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/cart/" hidden><img class="rounded-circle" width="30" height="25"
-                                                                  style="padding-right: 5px"
-                                                                  src="${pageContext.request.contextPath}/images/cart.png">Koszyk
-                        <span class="badge badge-pill badge-success">${itemsInCart}</span></a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="/orders/" hidden>Zamówienia</a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-sm-5 mt-2 mt-md-0">
@@ -57,19 +45,17 @@
                        aria-haspopup="true"
                        aria-expanded="false">
                         <img class="rounded-circle" width="20" height="20"
-                             src="${pageContext.request.contextPath}/images/user.png" alt="USER"> ADMIN</a>
+                             src="${pageContext.request.contextPath}/images/user.png" alt="USER"> ${username}</a>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
                         <a class="dropdown-item" href="#">Ustawienia</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/">Wyloguj</a>
-
-                        <%--                        <sec:authorize access="isAuthenticated()">--%>
-                        <%--                            <form action="<c:url value="/"/>" method="post">--%>
-                        <%--                                <input type="submit" class="dropdown-item" value="Wyloguj">--%>
-                        <%--                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>--%>
-                        <%--                            </form>--%>
-                        <%--                        </sec:authorize>--%>
+                        <sec:authorize access="isAuthenticated()">
+                            <form action="<c:url value="/perform_logout"/>" method="post">
+                                <input type="submit" class="dropdown-item" value="Wyloguj">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            </form>
+                        </sec:authorize>
                     </div>
                 </li>
             </ul>
@@ -80,9 +66,9 @@
     <div class="row">
         <div class="container p-3 my-3 border shadow p-1 mb-1 bg-white rounded">
             <h3 style="float:left">
-                <a href="/dashboard/" class="btn btn-outline-success  btn-large">Zarządzaj kategoriami</a>
-                <a href="/productsAdmin/" class="btn btn-outline-success btn--large">Zarządzaj produktami</a>
-                <a href="/ordersAdmin/" class="btn btn-outline-success active btn-large">Zarządzaj zamówieniami</a>
+                <a href="/admin/dashboard/" class="btn btn-outline-success  btn-large">Zarządzaj kategoriami</a>
+                <a href="/admin/productsAdmin/" class="btn btn-outline-success btn--large">Zarządzaj produktami</a>
+                <a href="/admin/ordersAdmin/" class="btn btn-outline-success active btn-large">Zarządzaj zamówieniami</a>
             </h3>
         </div>
     </div>
@@ -92,6 +78,7 @@
                 <thead class="thead-dark">
                 <tr>
                     <th>Numer</th>
+                    <th>Użytkownik</th>
                     <th>Data</th>
                     <th>Cena (PLN)</th>
                     <th>Status aktualny</th>
@@ -100,30 +87,31 @@
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${orders}" var="order">
+                <c:forEach items="${orders}" var="userOrders">
                     <tr>
-                        <td><c:out value="${order.orderNumber}"/></td>
-                        <td><c:out value="${order.date}"/></td>
-                        <td><c:out value="${order.cartValue}"/></td>
+                        <td><c:out value="${userOrders.id}"/></td>
+                        <td><c:out value="${userOrders.userEntity.username}"/></td>
+                        <td><c:out value="${userOrders.date}"/></td>
+                        <td><c:out value="${userOrders.cartValue}"/></td>
                         <td>
-                            <c:if test="${order.orderState == 'PRZYJĘTO'}">
+                            <c:if test="${userOrders.orderState.stateName == 'PRZYJĘTO'}">
                                 <span class="badge badge-pill badge-success">PRZYJĘTO DO REALIZACJI</span>
                             </c:if>
-                            <c:if test="${order.orderState == 'REALIZACJA'}">
+                            <c:if test="${userOrders.orderState.stateName == 'REALIZACJA'}">
                                 <span class="badge badge-pill badge-warning">W TRAKCIE REALIZACJI</span>
                             </c:if>
-                            <c:if test="${order.orderState == 'ZREALIZOWANE'}">
+                            <c:if test="${userOrders.orderState.stateName == 'ZREALIZOWANO'}">
                                 <span class="badge badge-pill badge-success">ZREALIZOWANO</span>
                             </c:if>
-                            <c:if test="${order.orderState == 'ANULOWANO'}">
+                            <c:if test="${userOrders.orderState.stateName == 'ANULOWANO'}">
                                 <span class="badge badge-pill badge-danger">ANULOWANO</span>
                             </c:if>
                         </td>
-                        <td><a href="/orderStatusSetANULOWANO/${order.orderNumber}" class="btn btn-outline-danger btn-sm" value="">ANULOWANO</a>
-                            <a href="/orderStatusSetREALIZACJA/${order.orderNumber}" class="btn btn-outline-warning btn-sm" value="">REALIZACJA</a>
-                            <a href="/orderStatusSetZREALIZOWANE/${order.orderNumber}" class="btn btn-outline-success btn-sm" value="">ZREALIZOWANO</a>
+                        <td><a href="/admin/orderStatusSetANULOWANO/${userOrders.id}" class="btn btn-outline-danger btn-sm" value="">ANULOWANO</a>
+                            <a href="/admin/orderStatusSetREALIZACJA/${userOrders.id}" class="btn btn-outline-dark btn-sm" value="">REALIZACJA</a>
+                            <a href="/admin/orderStatusSetZREALIZOWANE/${userOrders.id}" class="btn btn-outline-success btn-sm" value="">ZREALIZOWANO</a>
                         </td>
-                        <td><a href="/detailsAdmin/${order.orderNumber}" class="btn btn-outline-info btn-sm" value="">DETALE</a></td>
+                        <td><a href="/admin/detailsAdmin/${userOrders.id}" class="btn btn-outline-info btn-sm" value="">DETALE</a></td>
                     </tr>
                 </c:forEach>
                 </tbody>

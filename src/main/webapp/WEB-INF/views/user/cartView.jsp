@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
@@ -26,7 +27,7 @@
                 aria-label="Pokaż lub ukryj nawigację">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="/">
+        <a class="navbar-brand" href="/user/products/">
             <img src="${pageContext.request.contextPath}/images/avatar.jpg" width="40" height="40"
                  class="d-inline-block align-top rounded"
                  alt="idź na start">
@@ -36,19 +37,16 @@
         <div class="collapse navbar-collapse" id="mainNavigation">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item ">
-                    <a class="nav-link" href="/products/">Produkty</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/adminOrUser" hidden>Logowanie</a>
+                    <a class="nav-link" href="/user/products/">Produkty</a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="/cart/"><img class="rounded-circle" width="30" height="25"
+                    <a class="nav-link" href="/user/cart/"><img class="rounded-circle" width="30" height="25"
                                                            style="padding-right: 5px"
                                                            src="${pageContext.request.contextPath}/images/cart.png">Koszyk
                         <span class="badge badge-pill badge-success">${itemsInCart}</span></a>
                 </li>
                 <li class="nav-item ">
-                    <a class="nav-link" href="/orders/">Zamówienia</a>
+                    <a class="nav-link" href="/user/orders/">Zamówienia</a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-sm-5 mt-2 mt-md-0">
@@ -57,21 +55,19 @@
                        aria-haspopup="true"
                        aria-expanded="false">
                         <img class="rounded-circle" width="20" height="20"
-                             src="${pageContext.request.contextPath}/images/user.png" alt="USER"> USER</a>
+                             src="${pageContext.request.contextPath}/images/user.png" alt="USER"> ${username}</a>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
                         <a class="dropdown-item" href="#" hidden>Ustawienia</a>
-                        <a class="dropdown-item" href="/cart/">Koszyk <span
+                        <a class="dropdown-item" href="/user/cart/">Koszyk <span
                                 class="badge badge-pill badge-success">${itemsInCart}</span></a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/">Wyloguj</a>
-
-                        <%--                        <sec:authorize access="isAuthenticated()">--%>
-                        <%--                            <form action="<c:url value="/"/>" method="post">--%>
-                        <%--                                <input type="submit" class="dropdown-item" value="Wyloguj">--%>
-                        <%--                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>--%>
-                        <%--                            </form>--%>
-                        <%--                        </sec:authorize>--%>
+                        <sec:authorize access="isAuthenticated()">
+                            <form action="<c:url value="/perform_logout"/>" method="post">
+                                <input type="submit" class="dropdown-item" value="Wyloguj">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            </form>
+                        </sec:authorize>
                     </div>
                 </li>
             </ul>
@@ -89,7 +85,7 @@
             <c:if test="${emptyCart}">
                 <div class="alert alert-success alert-dismissable">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    Twój koszyk jest pusty przejdź do sekcji <a class="btn btn-outline-success" href="/products/">Produkty</a>
+                    Twój koszyk jest pusty przejdź do sekcji <a class="btn btn-outline-success" href="/user/products/">Produkty</a>
                     aby dodać produkty do koszyka i złożyć zamówienie.
                 </div>
             </c:if>
@@ -103,7 +99,7 @@
     </div>
     <div class="row">
         <div class="container p-3 my-3 border shadow p-1 mb-1 bg-white rounded">
-            <table class="table table-striped">
+            <table id="table" class="table table-striped">
                 <thead class="thead-dark">
                 <tr>
                     <th>Nazwa</th>
@@ -123,22 +119,22 @@
                         <td><c:out value="${cart.quantity}"/></td>
                         <td>${cart.product.price * cart.quantity}</td>
                         <td>
-                            <form:form action="/cart/" method="post" modelAttribute="product">
-                                <input hidden name="name" value="${cart.product.name}">
+                            <form:form action="/user/cart/" method="post" modelAttribute="product">
+                                <input hidden name="product" value="${cart.product.id}">
                                 <input hidden name="itemsNumber" value="+1">
                                 <input type="submit" class="btn btn-outline-success btn-sm" value="↑"></a>
                             </form:form>
                         </td>
                         <td>
-                            <form:form action="/cart/" method="post" modelAttribute="product">
-                                <input hidden name="name" value="${cart.product.name}">
+                            <form:form action="/user/cart/" method="post" modelAttribute="product">
+                                <input hidden name="product" value="${cart.product.id}">
                                 <input hidden name="itemsNumber" value="-1">
                                 <input type="submit" class="btn btn-outline-danger btn-sm" value="↓"></a>
                             </form:form>
                         </td>
                         <td>
-                            <form:form action="/cart/removeAll" method="post" modelAttribute="product">
-                                <input hidden name="name" value="${cart.product.name}">
+                            <form:form action="/user/cart/removeAll" method="post" modelAttribute="product">
+                                <input hidden name="product" value="${cart.product.id}">
                                 <input type="submit" class="btn btn-outline-danger btn-sm" value="USUŃ WSZYTSKIE"></a>
                             </form:form>
                         </td>
@@ -165,7 +161,8 @@
             </div>
         </c:if>
     </div>
-    <form id="formSubmitId" method="post" action="/orders/">
+    <form id="formSubmitId" method="post" action="/user/orders/">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <input type="hidden" name="totalValue" value="${totalCartValue}">
         <input type="hidden" value="${cart}">
     </form>

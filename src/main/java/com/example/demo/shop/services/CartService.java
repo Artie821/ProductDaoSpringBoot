@@ -1,13 +1,15 @@
 package com.example.demo.shop.services;
 
 import com.example.demo.shop.models.Cart;
-import com.example.demo.shop.models.Product;
 import com.example.demo.shop.repositories.CartDao;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Service
 public class CartService{
 
@@ -17,30 +19,6 @@ public class CartService{
         this.cartDao = cartDao;
     }
 
-    public void addToCart(Product product, Long quantity) {
-        if(quantity == 0){
-            return;
-        }
-        if (!(containsProduct(cartDao.all(), product))) {
-            cartDao.addToCart(product, quantity);
-        } else {
-            cartDao.all().stream()
-                    .filter(o -> o.getProduct().equals(product))
-                    .findFirst().get().setQuantity(cartDao.all().stream()
-                    .filter(o -> o.getProduct().equals(product))
-                    .findFirst().get().getQuantity() + quantity);
-            if(cartDao.all().stream()
-                    .filter(o -> o.getProduct().equals(product))
-                    .findFirst().get().getQuantity() <= 0l){
-                cartDao.removeElement(product);
-            }
-        }
-    }
-
-    public void removeAllOfTypeFromCart(Product product){
-        cartDao.removeElement(product);
-    }
-
     public List<Cart> all() {
         if (cartDao.all().isEmpty()) {
             return null;
@@ -48,23 +26,10 @@ public class CartService{
         return cartDao.all();
     }
 
-    public boolean containsProduct(final List<Cart> list, final Product product) {
-        return list.stream().filter(o -> o.getProduct().equals(product)).findFirst().isPresent();
-    }
-
     public long numberOfItemsInCart(){
        return cartDao.all().size();
     }
 
-    public long parseNumberOfItems(String parseVal){
-        Long itemsNumber = 0l;
-        try{
-            itemsNumber = Long.parseLong(parseVal);
-        } catch (NumberFormatException e){
-            System.out.println("Not a number!");
-        }
-        return itemsNumber;
-    }
 
     public boolean isCartEmpty(){
         if(cartDao.all().isEmpty()){

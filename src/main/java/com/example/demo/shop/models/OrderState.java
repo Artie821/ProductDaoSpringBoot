@@ -1,5 +1,19 @@
 package com.example.demo.shop.models;
 
-public enum OrderState {
-        PRZYJĘTO, REALIZACJA, ZREALIZOWANE, ANULOWANO;
+
+import lombok.Data;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+@Data
+public class OrderState {
+
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+        private String stateName;
 }

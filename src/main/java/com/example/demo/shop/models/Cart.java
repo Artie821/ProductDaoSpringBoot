@@ -1,19 +1,20 @@
 package com.example.demo.shop.models;
 
 import lombok.Data;
+import org.springframework.web.context.annotation.SessionScope;
 
-import java.util.List;
+import javax.persistence.*;
 
+@Entity
 @Data
-public class Cart implements Cloneable {
+@SessionScope
+public class Cart {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne
     private Product product;
     private long quantity;
-
-    public Cart(Product product, long quantity) {
-        this.product = product;
-        this.quantity = quantity;
-    }
-
 
 }

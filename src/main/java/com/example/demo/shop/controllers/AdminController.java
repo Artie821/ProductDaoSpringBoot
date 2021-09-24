@@ -1,155 +1,160 @@
 package com.example.demo.shop.controllers;
 
-import com.example.demo.shop.models.OrderState;
 import com.example.demo.shop.models.Product;
 import com.example.demo.shop.models.ProductCategory;
 import com.example.demo.shop.repositories.CategoryDao;
+import com.example.demo.shop.repositories.OrderDao;
 import com.example.demo.shop.repositories.ProductDao;
-import com.example.demo.shop.services.OrderService;
+import org.springframework.context.annotation.Scope;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
+@Scope("session")
 @Controller
 public class AdminController {
 
     private final ProductDao productDao;
     private final CategoryDao categoryDao;
-    private final OrderService orderService;
+    private final OrderDao orderDao;
 
-    public AdminController(ProductDao productDao, CategoryDao categoryDao, OrderService orderService) {
+    public AdminController(ProductDao productDao, CategoryDao categoryDao, OrderDao orderDao) {
         this.productDao = productDao;
         this.categoryDao = categoryDao;
-        this.orderService = orderService;
+        this.orderDao = orderDao;
     }
 
-    @GetMapping (value = "/dashboard/")
-    public String adminDashboard(Model model, HttpServletRequest request) {
-        model.addAttribute("categories", categoryDao.all());
+    public String loggedUserName(){
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((UserDetails) principal).getUsername();
+        return username;
+    }
+
+    @GetMapping (value = "/admin/dashboard/")
+    public String adminDashboard(Model model) {
+        model.addAttribute("username", loggedUserName());
+        model.addAttribute("categories", categoryDao.allActiveAndNotActive());
         return "/admin/adminDashboard";
     }
 
-    @GetMapping (value = "productsAdmin/")
-    public String adminProducts(Model model, HttpServletRequest request) {
-        model.addAttribute("products", productDao.all());
+    @GetMapping (value = "/admin/productsAdmin/")
+    public String adminProducts(Model model) {
+        model.addAttribute("username", loggedUserName());
+        model.addAttribute("products", productDao.allActiveAndNotActive());
         return "/admin/products";
     }
 
-    @GetMapping (value = "ordersAdmin/")
-    public String adminOrders(Model model, HttpServletRequest request) {
-        model.addAttribute("orders", orderService.all());
+    @GetMapping (value = "/admin/ordersAdmin/")
+    public String adminOrders(Model model) {
+        model.addAttribute("username", loggedUserName());
+        model.addAttribute("orders", orderDao.all());
         return "/admin/orders";
     }
 
-    @GetMapping (value = "addCategoryAdmin/")
-    public String adminAddCategory(Model model, HttpServletRequest request) {
+    @GetMapping (value = "/admin/addCategoryAdmin/")
+    public String adminAddCategory(Model model) {
+        model.addAttribute("username", loggedUserName());
         model.addAttribute("productCategories", categoryDao.all());
         return "/admin/addCategory";
     }
 
-    @RequestMapping(value = "addCategoryAdmin/", method = RequestMethod.POST)
-    public String adminAddCategoryPost(HttpServletRequest request, Model model, RedirectAttributes redirectAttrs){
-        if(categoryDao.alreadyExist(request.getParameter("categoryName"))) {
-            redirectAttrs.addAttribute("exist", true);
-            return "redirect:/addCategoryAdmin/";
-        }
-        categoryDao.addCategory(request.getParameter("categoryName"));
-        return "redirect:/dashboard/";
+    @RequestMapping(value = "/admin/addCategoryAdmin/", method = RequestMethod.POST)
+    public String adminAddCategoryPost(@ModelAttribute("productCategory") ProductCategory
+                                                   category){
+        categoryDao.addCategory(category);
+        return "redirect:/admin/dashboard/";
     }
 
-    @GetMapping (value = "editCategoryAdmin/{name}")
-    public String adminEditCategory(Model model, @PathVariable String name) {
-        model.addAttribute("index",categoryDao.getCategoryIndexByName(name));
-        model.addAttribute("category", name);
+    @GetMapping (value = "/admin/editCategoryAdmin/{id}")
+    public String adminEditCategory(Model model, @PathVariable Long id) {
+        model.addAttribute("username", loggedUserName());
+        model.addAttribute("category", categoryDao.getCategoryById(id));
         return "/admin/editCategory";
     }
 
-    @RequestMapping(value = "editCategoryAdmin/", method = RequestMethod.POST)
-    public String adminEditCategoryPost(HttpServletRequest request, Model model, RedirectAttributes redirectAttrs){
-        if(categoryDao.alreadyExist(request.getParameter("categoryName"))) {
-            redirectAttrs.addAttribute("exist", true);
-            ProductCategory pc = categoryDao.getCategoryByIndex(Integer.parseInt(request.getParameter("index")));
-            return "redirect:/editCategoryAdmin/" + pc.getCategoryName();
-        }
-        categoryDao.editCategoryByName(Integer.parseInt(request.getParameter("index")), request.getParameter("categoryName"));
-        return "redirect:/dashboard/";
+    @RequestMapping(value = "/admin/editCategoryAdmin/", method = RequestMethod.POST)
+    public String adminEditCategoryPost(@ModelAttribute("productCategory") ProductCategory category){
+        categoryDao.addCategory(category);
+        return "redirect:/admin/dashboard/";
     }
 
-    @GetMapping (value = "removeCategoryAdmin/{name}")
-    public String adminRemoveCategory(Model model, @PathVariable String name) {
-        categoryDao.removeCategoryByName(name);
-        return "redirect:/dashboard/";
+    @GetMapping (value = "/admin/removeCategoryAdmin/{id}")
+    public String adminRemoveCategory(@PathVariable Long id, Model model) {
+        model.addAttribute("username", loggedUserName());
+        categoryDao.removeCategoryById(id);
+        return "redirect:/admin/dashboard/";
     }
 
-    @RequestMapping(value = "addProductAdmin/", method = RequestMethod.POST)
-    public String adminAddProductPost(@ModelAttribute("product") Product
-                                                  product, Model model, RedirectAttributes redirectAttrs){
+    @RequestMapping(value = "/admin/addProductAdmin/", method = RequestMethod.POST)
+    public String adminAddProductPost(@ModelAttribute("product") Product product, Model model){
+        model.addAttribute("username", loggedUserName());
         model.addAttribute("ProductCategory", productDao.all());
         productDao.addNewProduct(product);
-        return "redirect:/productsAdmin/";
+        return "redirect:/admin/productsAdmin/";
     }
 
-    @GetMapping (value = "addProductAdmin/")
+    @GetMapping (value = "/admin/addProductAdmin/")
     public String adminAddProduct(Model model, @ModelAttribute("product") Product
             product) {
+        model.addAttribute("username", loggedUserName());
         model.addAttribute("product", product);
         model.addAttribute("categories", categoryDao.all());
         return "/admin/addProduct";
     }
 
-    @GetMapping (value = "editProductAdmin/{name}")
+    @GetMapping (value = "/admin/editProductAdmin/{id}")
     public String adminEditProduct(Model model, @ModelAttribute("product") Product
-            product, @PathVariable String name) {
-        model.addAttribute("product", productDao.byName(name));
+            product, @PathVariable Long id) {
+        model.addAttribute("username", loggedUserName());
+        model.addAttribute("product", productDao.findProductById(id));
         model.addAttribute("categories", categoryDao.all());
-        model.addAttribute("index",productDao.findIndexByName(name));
-        System.out.println(productDao.findIndexByName(name));
         return "/admin/editProduct";
     }
 
-    @RequestMapping(value = "editProductAdmin/", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/editProductAdmin/", method = RequestMethod.POST)
     public String adminEditProductPost( @ModelAttribute("product") Product
                                               product, Model model, HttpServletRequest request){
-        model.addAttribute("ProductCategory", productDao.all());
-        System.out.println(request.getParameter("index"));
-        productDao.editProductById(Integer.parseInt(request.getParameter("index")) , product);
-        return "redirect:/productsAdmin/";
+       productDao.editProduct(product);
+        return "redirect:/admin/productsAdmin/";
     }
 
-    @GetMapping (value = "removeProductAdmin/{name}")
-    public String adminRemoveProduct(Model model, @PathVariable String name) {
-        productDao.removeProductByName(name);
-        return "redirect:/productsAdmin/";
+    @GetMapping (value = "/admin/removeProductAdmin/{id}")
+    public String adminRemoveProduct(Model model, @PathVariable Long id) {
+        model.addAttribute("username", loggedUserName());
+        productDao.removeProductByName(id);
+        return "redirect:/admin/productsAdmin/";
     }
 
-    @GetMapping("orderStatusSetREALIZACJA/{id}")
-    public String orderStatusSetREALIZACJA(@PathVariable int id){
-        OrderState o = OrderState.REALIZACJA;
-        orderService.changeState(id,o);
-        return "redirect:/ordersAdmin/";
+    @GetMapping("/admin/orderStatusSetREALIZACJA/{id}")
+    public String orderStatusSetREALIZACJA(Model model,@PathVariable Long id){
+        model.addAttribute("username", loggedUserName());
+        orderDao.changeState(id,"REALIZACJA");
+        return "redirect:/admin/ordersAdmin/";
     }
 
-    @GetMapping("orderStatusSetANULOWANO/{id}")
-    public String orderStatusSetANULOWANO(@PathVariable int id){
-        OrderState o = OrderState.ANULOWANO;
-        orderService.changeState(id,o);
-        return "redirect:/ordersAdmin/";
+    @GetMapping("/admin/orderStatusSetANULOWANO/{id}")
+    public String orderStatusSetANULOWANO(Model model,@PathVariable Long id){
+        model.addAttribute("username", loggedUserName());
+        orderDao.changeState(id,"ANULOWANO");
+        return "redirect:/admin/ordersAdmin/";
     }
 
-    @GetMapping("orderStatusSetZREALIZOWANE/{id}")
-    public String orderStatusSetZREALIZOWANE(@PathVariable int id){
-        OrderState o = OrderState.ZREALIZOWANE;
-        orderService.changeState(id,o);
-        return "redirect:/ordersAdmin/";
+    @GetMapping("/admin/orderStatusSetZREALIZOWANE/{id}")
+    public String orderStatusSetZREALIZOWANE(Model model,@PathVariable Long id){
+        model.addAttribute("username", loggedUserName());
+        orderDao.changeState(id,"ZREALIZOWANO");
+        return "redirect:/admin/ordersAdmin/";
     }
 
-    @GetMapping("/detailsAdmin/{id}")
+    @GetMapping("/admin/detailsAdmin/{id}")
     public String orderDetails(@PathVariable long id, Model model){
-        model.addAttribute("itemsInCart", orderService.OrderBonus(id));
-        model.addAttribute("order", orderService.findById(id));
+        model.addAttribute("username", loggedUserName());
+        model.addAttribute("itemsInCart", orderDao.orderBonus(id));
+        model.addAttribute("order", orderDao.findById(id));
         return "/admin/orderDetails";
     }
 

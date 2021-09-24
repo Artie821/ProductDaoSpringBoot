@@ -1,4 +1,4 @@
-package com.example.demo.shop.models;
+package com.example.demo.shop.security;
 
 import lombok.Data;
 
@@ -7,13 +7,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-@Data
 @Entity
-public class ProductCategory {
+@Data
+public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String categoryName;
-    private Boolean active;
+    private String name;
 }

@@ -1,64 +1,45 @@
 package com.example.demo.shop.repositories;
 
 import com.example.demo.shop.models.ProductCategory;
+import com.example.demo.shop.models.UserOrders;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-
-import java.util.Arrays;
 import java.util.List;
 
 @Component
 public class CategoryDao {
 
-    private List<ProductCategory> categoryList = new ArrayList(Arrays.asList(
-            new ProductCategory("owoce"),
-            new ProductCategory("warzywa"),
-            new ProductCategory("inne"))
-    );
+    private final CategoryJPAInterface categoryJPAInterface;
 
+    public CategoryDao(CategoryJPAInterface categoryJPAInterface) {
+        this.categoryJPAInterface = categoryJPAInterface;
+    }
 
     public List<ProductCategory> all() {
-        return categoryList;
+        return categoryJPAInterface.findAllActiveCategories();
     }
 
-    public ProductCategory byName(String name) {
-        for (ProductCategory category : categoryList) {
-            if (name.equals(category.getCategoryName())) {
-                return category;
-            }
+    public List<ProductCategory> allActiveAndNotActive() {
+        return categoryJPAInterface.findAll();
+    }
+
+    public void addCategory(ProductCategory productCategory) {
+        productCategory.setActive(true);
+        categoryJPAInterface.save(productCategory);
+    }
+
+    public ProductCategory getCategoryById(Long id) {
+        return categoryJPAInterface.getById(id);
+    }
+
+    public void removeCategoryById(Long id) {
+        ProductCategory productCategory = categoryJPAInterface.getById(id);
+        if(productCategory.getActive()==true) {
+           productCategory.setActive(false);
+        } else {
+            productCategory.setActive(true);
         }
-        return null;
-    }
+        categoryJPAInterface.save(productCategory);
 
-    public boolean alreadyExist(String name) {
-        for (ProductCategory category : categoryList) {
-            if (name.equals(category.getCategoryName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public ProductCategory getCategoryByIndex(int index){
-       return categoryList.get(index);
-    }
-
-    public void addCategory(String categoryName){
-        categoryList.add(new ProductCategory(categoryName));
-    }
-
-    public int getCategoryIndexByName(String name){
-        ProductCategory pc = byName(name);
-        return categoryList.indexOf(pc);
-    }
-
-    public void editCategoryByName(int index, String name){
-        categoryList.get(index).setCategoryName(name);
-    }
-
-    public void removeCategoryByName(String name){
-        ProductCategory pc = byName(name);
-        categoryList.remove(pc);
     }
 }

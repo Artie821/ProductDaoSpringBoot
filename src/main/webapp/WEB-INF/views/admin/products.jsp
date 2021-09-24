@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
@@ -26,7 +27,7 @@
                 aria-label="Pokaż lub ukryj nawigację">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="/">
+        <a class="navbar-brand" href="/admin/dashboard/">
             <img src="${pageContext.request.contextPath}/images/avatar.jpg" width="40" height="40"
                  class="d-inline-block align-top rounded"
                  alt="idź na start">
@@ -36,19 +37,6 @@
         <div class="collapse navbar-collapse" id="mainNavigation">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item ">
-                    <a class="nav-link" href="/products/" hidden>Produkty</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/adminOrUser" hidden>Logowanie</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/cart/" hidden><img class="rounded-circle" width="30" height="25"
-                                                                  style="padding-right: 5px"
-                                                                  src="${pageContext.request.contextPath}/images/cart.png">Koszyk
-                        <span class="badge badge-pill badge-success">${itemsInCart}</span></a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="/orders/" hidden>Zamówienia</a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-sm-5 mt-2 mt-md-0">
@@ -57,19 +45,17 @@
                        aria-haspopup="true"
                        aria-expanded="false">
                         <img class="rounded-circle" width="20" height="20"
-                             src="${pageContext.request.contextPath}/images/user.png" alt="USER"> ADMIN</a>
+                             src="${pageContext.request.contextPath}/images/user.png" alt="USER"> ${username}</a>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
                         <a class="dropdown-item" href="#" >Ustawienia</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="/">Wyloguj</a>
-
-                        <%--                        <sec:authorize access="isAuthenticated()">--%>
-                        <%--                            <form action="<c:url value="/"/>" method="post">--%>
-                        <%--                                <input type="submit" class="dropdown-item" value="Wyloguj">--%>
-                        <%--                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>--%>
-                        <%--                            </form>--%>
-                        <%--                        </sec:authorize>--%>
+                        <sec:authorize access="isAuthenticated()">
+                            <form action="<c:url value="/perform_logout"/>" method="post">
+                                <input type="submit" class="dropdown-item" value="Wyloguj">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                            </form>
+                        </sec:authorize>
                     </div>
                 </li>
             </ul>
@@ -80,9 +66,9 @@
     <div class="row">
         <div class="container p-3 my-3 border shadow p-1 mb-1 bg-white rounded">
             <h3 style="float:left">
-                <a href="/dashboard/" class="btn btn-outline-success  btn-large" >Zarządzaj kategoriami</a>
-                <a href="/productsAdmin/" class="btn btn-outline-success active btn--large">Zarządzaj produktami</a>
-                <a href="/ordersAdmin/" class="btn btn-outline-success  btn-large">Zarządzaj zamówieniami</a>
+                <a href="/admin/dashboard/" class="btn btn-outline-success  btn-large" >Zarządzaj kategoriami</a>
+                <a href="/admin/productsAdmin/" class="btn btn-outline-success active btn--large">Zarządzaj produktami</a>
+                <a href="/admin/ordersAdmin/" class="btn btn-outline-success  btn-large">Zarządzaj zamówieniami</a>
             </h3>
         </div>
     </div>
@@ -95,6 +81,7 @@
                     <th>Cena (PLN)</th>
                     <th>Kategoria</th>
                     <th>Opis</th>
+                    <th>Status</th>
                     <th>Akcja</th>
                 </tr>
                 </thead>
@@ -105,8 +92,16 @@
                         <td><c:out value="${product.price}"/></td>
                         <td><c:out value="${product.productCategory.categoryName}"/></td>
                         <td><c:out value="${product.description}"/></td>
-                        <td><a href="/editProductAdmin/${product.name}" class="btn btn-outline-success btn-sm" value="">EDYTUJ</a>
-                            <a href="/removeProductAdmin/${product.name}" class="btn btn-outline-danger btn-sm" value="">USUŃ</a>
+                        <td>
+                            <c:if test="${product.active}">
+                                <span class="badge badge-pill badge-success">AKTYWNE</span>
+                            </c:if>
+                            <c:if test="${!product.active}">
+                                <span class="badge badge-pill badge-warning">NIE AKTYWNE</span>
+                            </c:if>
+                        </td>
+                        <td><a href="/admin/editProductAdmin/${product.id}" class="btn btn-outline-success btn-sm" value="">EDYTUJ</a>
+                            <a href="/admin/removeProductAdmin/${product.id}" class="btn btn-outline-dark btn-sm" value="">ZMIEŃ STATUS</a>
                         </td>
                     </tr>
                 </c:forEach>
@@ -116,7 +111,7 @@
     </div>
     <div class="row">
         <div class="container p-3 my-3 border shadow p-1 mb-1 bg-white rounded">
-            <a href="/addProductAdmin/"  class="btn btn-outline-success btn-lg" >DODAJ PRODUKT</a>
+            <a href="/admin/addProductAdmin/"  class="btn btn-outline-success btn-lg" >DODAJ PRODUKT</a>
         </div>
     </div>
 </section>
